@@ -12,7 +12,7 @@ use POE;
 
 use vars qw($VERSION);
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 use constant DEFAULT_ALIAS         => 'dirwatch';
 use constant DEFAULT_POLL_INTERVAL => 1;
@@ -96,11 +96,6 @@ sub poll
       if ($heap->{Filter}->(@params)) {
           # report it to the caller
           $kernel->yield(callback => @params);
-          # poll again so we can process more than
-          # one file per PollInterval
-          $kernel->yield('poll');
-          # and exit
-          last;
       }
   }
 
@@ -202,6 +197,10 @@ If not specified, defaults to C<sub { -f $_[1] }>.
 
 =back
 
+=head1 TODO
+
+Use C<Win32::ChangeNotify> on Win32 platforms for better performance.
+
 =head1 SEE ALSO
 
 POE(3), POE::Component(3)
@@ -211,7 +210,7 @@ POE(3), POE::Component(3)
 Eric Cholet, <cholet@logilune.com>
 
 Thanks to Matt Sergeant for POE insights and bug reports,
-and David Rigaudière for Win32 testing.
+and David Rigaudiere for Win32 testing.
 
 =head1 COPYRIGHT
 

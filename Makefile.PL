@@ -10,7 +10,8 @@ WriteMakefile
     VERSION_FROM => 'DirWatch.pm',
 
     PM           => { 'DirWatch.pm' => '$(INST_LIBDIR)/DirWatch.pm' },
-    PREREQ_PM    => { POE      => 0.12,
+    PREREQ_PM    => { POE        => 0.12,
+                      Test::More => 0,
                     },
     dist         => { COMPRESS => 'gzip -9f',
                       SUFFIX   => 'gz',
