@@ -1,0 +1,8 @@
+# $Id: MANIFEST,v 1.1 2002/07/04 17:36:39 eric Exp $
+CHANGES
+DirWatch.pm
+MANIFEST
+Makefile.PL
+README
+t/01basic.t
+eg/dirwatch
