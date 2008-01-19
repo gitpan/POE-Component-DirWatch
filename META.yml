@@ -15,6 +15,8 @@ no_index:
   directory: 
     - inc
     - t
+recommends: 
+  POE::Component::AIO: 1.00
 requires: 
   File::Signature: 0
   Moose: 0.24
@@ -22,4 +24,4 @@ requires:
   POE: 0.12
   Path::Class: 0
   Time::HiRes: 0
-version: 0.100000_01
+version: 0.100000_02
