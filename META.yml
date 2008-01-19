@@ -1,12 +1,25 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         POE-Component-DirWatch
-version:      0.02
-version_from: DirWatch.pm
-installdirs:  site
-requires:
-    POE:                           0.12
-    Test::More:                    0
-
+--- 
+abstract: Directory Watcher for POE
+author: 
+  - Guillermo Roditi, <groditi@cpan.org>
+build_requires: 
+  Test::More: 0
 distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.26
+generated_by: Module::Install version 0.68
+license: perl
+meta-spec: 
+  url: http://module-build.sourceforge.net/META-spec-v1.3.html
+  version: 1.3
+name: POE-Component-DirWatch
+no_index: 
+  directory: 
+    - inc
+    - t
+requires: 
+  File::Signature: 0
+  Moose: 0.24
+  MooseX::Types::Path::Class: 0
+  POE: 0.12
+  Path::Class: 0
+  Time::HiRes: 0
+version: 0.100000_01

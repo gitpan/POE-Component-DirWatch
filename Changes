@@ -1,15 +1,5 @@
-$Id: CHANGES,v 1.2 2002/07/05 00:47:53 eric Exp $
+Revision history for POE-Component-DirWatch
 
-================================================
-Revision history for POE::Component::DirWatch
-================================================
+0.01    Jan 17, 2008
+        Initial Release
 
-2005-03-26 - 0.02
-
-- Fixed a bug where DirWatch would poll at full speed
-  and wouldn't invoke the callback for all files.
-  Reported by Joaquin Ferrero.
-- Use recent MakeMaker to provide META.yml
-- Use Test::More, enhance the tests
-
-2002-07-05 - 0.01

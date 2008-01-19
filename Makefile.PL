@@ -1,19 +1,22 @@
-#!/usr/bin/perl
-# $Id: Makefile.PL,v 1.1 2002/07/04 17:36:39 eric Exp $
+#! /usr/bin/perl -w
 
-use ExtUtils::MakeMaker;
+# Load the Module::Install bundled in ./inc/
+use inc::Module::Install;
 
-WriteMakefile
-  ( NAME         => 'POE::Component::DirWatch',
-    AUTHOR       => 'Eric Cholet <cholet@logilune.com>',
-    ABSTRACT     => 'POE component watches a directory for files.',
-    VERSION_FROM => 'DirWatch.pm',
+# Define metadata
+name 'POE-Component-DirWatch';
+abstract 'Directory Watcher for POE';
+all_from 'lib/POE/Component/DirWatch.pm';
 
-    PM           => { 'DirWatch.pm' => '$(INST_LIBDIR)/DirWatch.pm' },
-    PREREQ_PM    => { POE        => 0.12,
-                      Test::More => 0,
-                    },
-    dist         => { COMPRESS => 'gzip -9f',
-                      SUFFIX   => 'gz',
-                    },
-  );
+# Specific dependencies
+requires 'POE'             => 0.12;
+requires 'Moose'           => 0.24;
+requires 'Time::HiRes'     => 0;
+requires 'Path::Class'     => 0;
+requires 'File::Signature' => 0;
+requires 'MooseX::Types::Path::Class' => 0;
+
+build_requires 'Test::More' => 0;
+
+auto_install;
+WriteAll;
