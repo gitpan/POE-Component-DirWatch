@@ -25,5 +25,4 @@ t/01-basic.t
 t/02-newfile.t
 t/03-editedfile.t
 t/05-pauseresume.t
-t/pod-coverage.t
 t/pod.t
