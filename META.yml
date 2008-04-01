@@ -24,4 +24,4 @@ requires:
   POE: 0.12
   Path::Class: 0
   Time::HiRes: 0
-version: 0.100000_03
+version: 0.100000
