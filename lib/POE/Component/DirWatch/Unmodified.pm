@@ -3,7 +3,7 @@ package POE::Component::DirWatch::Unmodified;
 use POE;
 use Moose;
 
-our $VERSION = "0.001000";
+our $VERSION = "0.002000";
 
 extends 'POE::Component::DirWatch';
 with 'POE::Component::DirWatch::Role::Signatures';
@@ -14,7 +14,7 @@ around _file_callback => sub{
   my $orig = shift;
   my ($self, $kernel, $file) = @_[OBJECT, KERNEL, ARG0];
   my $sig = delete $self->signatures->{"$file"};
-  return unless defined $sig && $sig->is_same;
+  return unless defined $sig && $sig eq $self->_generate_signature($file);;
   $orig->(@_);
 };
 
@@ -61,9 +61,8 @@ L<POE::Component::DirWatch>, L<Moose>
 
 =head1 COPYRIGHT
 
-Copyright 2006-2008 Guillermo Roditi.  All Rights Reserved.  This is
-free software; you may redistribute it and/or modify it under the same
-terms as Perl itself.
+Copyright 2006-2008 Guillermo Roditi. This is free software; you may
+redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut
 

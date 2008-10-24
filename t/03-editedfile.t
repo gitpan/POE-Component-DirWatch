@@ -34,12 +34,15 @@ sub _tstart {
 
   $kernel->alias_set("CharlieCard");
   # create a test directory with some test files
-  File::Path::rmtree("$DIR");
-  mkdir("$DIR", 0755) or die "can't create $DIR: $!\n";
+  $DIR->rmtree;
+  $DIR->mkpath or die "can't create $DIR: $!\n";
   for my $file (keys %FILES) {
     my $path = file($DIR, $file);
-    open FH, ">$path" or die "Can't create $path: $!\n";
-    close FH;
+    if(my $fh = $path->openw){
+      print $fh rand();
+    } else {
+      die "Can't create $path: $!\n";
+    }
   }
 
   my $watcher =  POE::Component::DirWatch::Modified->new
@@ -57,7 +60,7 @@ sub _tstart {
 sub _tstop{
   is_deeply(\%FILES, \%seen, 'seen all files');
   ok($seen{foo} == 2," Picked up edited file");
-  ok(File::Path::rmtree("$DIR"), 'Proper cleanup detected');
+  ok($DIR->rmtree, 'Proper cleanup detected');
 }
 
 sub file_found{
@@ -68,14 +71,19 @@ sub file_found{
 
   if($state == (keys %FILES) ){
     my $path = file($DIR, 'foo');
-    my $sig = File::Signature->new("$path");
+    my $old = "".File::Signature->new("$path")."";
     is(utime(undef, undef, "$path"), 1, "Succeeded in touching $path");
-    ok($sig->changed, "File signature did indeed change");
+    if(my $fh = $path->openw){
+      print $fh rand();
+      $fh->flush;
+    }
+    my $new = "".File::Signature->new("$path")."";
+    isnt($old, $new, "File signature did indeed change");
   } elsif ($state == (keys %FILES) + 1 ) {
     $poe_kernel->state("endtest",  sub{ $_[KERNEL]->post(CharlieCard => '_endtest') });
     $poe_kernel->delay("endtest", 3);
   } elsif ($state > (keys %FILES) + 1 ) {
-    File::Path::rmtree("$DIR");
+    $DIR->rmtree;
     die "We seem to be looping, bailing out\n";
   }
 }

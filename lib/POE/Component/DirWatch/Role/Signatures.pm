@@ -4,20 +4,25 @@ use POE;
 use Moose::Role;
 use File::Signature;
 
-our $VERSION = "0.001000";
+our $VERSION = "0.002000";
 
 has signatures =>
   (is => 'ro', isa => 'HashRef', required => 1, default => sub{{}});
 
 after _file_callback => sub{
   my ($self, $file) = @_[OBJECT, ARG0];
-  $self->signatures->{ "$file" } ||= File::Signature->new( "$file" );
+  $self->signatures->{ "$file" } ||= $self->_generate_signature($file);
 };
 
 before _poll => sub{
   my $sigs = shift->signatures;
   delete($sigs->{$_}) for grep {! -e $_ } keys %$sigs;
 };
+
+sub _generate_signature{
+  my ($self, $file) = @_;
+  return "" . File::Signature->new( "$file" ) . "";
+}
 
 1;
 
@@ -42,7 +47,7 @@ a file has changed.
 =head2 signatures
 
 Read-write. Will return a hashref in which keys will be the full path of the
-files seen and the value will be a File::Signature object
+files seen and the value will be a stringified L<File::Signature> object.
 
 =head1 METHODS
 
@@ -58,13 +63,12 @@ longer exist they are removed from the list of known files.
 
 =head1 SEE ALSO
 
-L<POE::Component::DirWatch>, L<Moose>
+L<File::Signature>, L<POE::Component::DirWatch>, L<Moose>
 
 =head1 COPYRIGHT
 
-Copyright 2006-2008 Guillermo Roditi.  All Rights Reserved.  This is
-free software; you may redistribute it and/or modify it under the same
-terms as Perl itself.
+Copyright 2006-2008 Guillermo Roditi. This is free software; you may
+redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut
 

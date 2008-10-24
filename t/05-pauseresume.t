@@ -7,7 +7,7 @@ use FindBin     qw($Bin);
 use File::Path;
 use Path::Class qw/dir file/;
 use Test::More  tests => 5;
-use Time::HiRes;
+use Time::HiRes qw/time/;
 use POE::Component::DirWatch;
 
 my %FILES = (foo => 1);
@@ -34,12 +34,15 @@ sub _tstart {
 
   $kernel->alias_set("CharlieCard");
   # create a test directory with some test files
-  File::Path::rmtree("$DIR");
-  mkdir("$DIR", 0755) or die "can't create $DIR: $!\n";
+  $DIR->rmtree;
+  $DIR->mkpath or die "can't create $DIR: $!\n";
   for my $file (keys %FILES) {
     my $path = file($DIR, $file);
-    open FH, ">$path" or die "can't create $path: $!\n";
-    close FH;
+    if(my $fh = $path->openw){
+      print $fh rand();
+    } else {
+      die "Can't create $path: $!\n";
+    }
   }
 
   my $watcher =  POE::Component::DirWatch->new
@@ -52,29 +55,30 @@ sub _tstart {
 }
 
 sub _tstop{
-  ok(File::Path::rmtree("$DIR"), 'Proper cleanup detected');
+  ok($DIR->rmtree, 'Proper cleanup detected');
 }
+
 
 my $time;
 sub file_found{
-  if(++$state == 1){
+  $state++;
+  if($state == 1){
     $time = time + 3;
     $poe_kernel->post(dirwatch_test => '_pause', $time);
   } elsif($state == 2){
-    ok($time <= time, "Pause Until Works");
-    $time = time + 3;
-    $poe_kernel->post(dirwatch_test => '_pause');
-        $poe_kernel->post(dirwatch_test => '_resume',$time);
-  } elsif($state == 3){
-    ok($time <= time, "Pause - Resume When Works");
+    ok((time - $time) < 1, "Pause Until Works");
     $time = time + 3;
     $poe_kernel->post(dirwatch_test => '_pause');
     $poe_kernel->post(dirwatch_test => '_resume',$time);
+  } elsif($state == 3){
+    ok((time - $time) < 1, "Pause - Resume When Works");
+    $time = time + 3;
+    $poe_kernel->post(dirwatch_test => '_resume',$time);
   } elsif($state == 4){
-    ok($time <= time, "Resume When Works");
+    ok((time - $time) < 1, "Resume When Works");
     $poe_kernel->post(dirwatch_test => 'shutdown');
   } else {
-    File::Path::rmtree("$DIR");
+    $DIR->rmtree;
     die "Something is wrong, bailing out!\n";
   }
 }

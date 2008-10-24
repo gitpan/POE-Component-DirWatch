@@ -1,6 +1,6 @@
 package POE::Component::DirWatch;
 
-our $VERSION = "0.100000";
+our $VERSION = "0.200000";
 
 use POE;
 use Moose;
@@ -25,28 +25,28 @@ has alias => (is => 'ro', isa => 'Str', required => 1, default => 'dirwatch');
 has directory => (is => 'rw', isa =>  Dir,  required => 1, coerce => 1);
 has interval  => (is => 'rw', isa => 'Int', required => 1 );
 has next_poll => (
-                  is => 'rw', isa => 'Int',
-                  clearer   => 'clear_next_poll',
-                  predicate => 'has_next_poll'
-                 );
+  is => 'rw', isa => 'Int',
+  clearer   => 'clear_next_poll',
+  predicate => 'has_next_poll'
+);
 
-has filter    => (
-                  is => 'rw', isa => 'CodeRef',
-                  clearer   => 'clear_filter',
-                  predicate => 'has_filter'
-                 );
+has filter => (
+  is => 'rw', isa => 'CodeRef',
+  clearer   => 'clear_filter',
+  predicate => 'has_filter'
+);
 
-has dir_callback  => (
-                      is => 'rw', isa => 'Ref',
-                      clearer   => 'clear_dir_callback',
-                      predicate => 'has_dir_callback'
-                     );
+has dir_callback => (
+  is => 'rw', isa => 'Ref',
+  clearer   => 'clear_dir_callback',
+  predicate => 'has_dir_callback'
+);
 
 has file_callback => (
-                      is => 'rw', isa => 'Ref',
-                      clearer   => 'clear_file_callback',
-                      predicate => 'has_file_callback'
-                     );
+  is => 'rw', isa => 'Ref',
+  clearer   => 'clear_file_callback',
+  predicate => 'has_file_callback'
+);
 
 sub BUILD{
   my ($self, $args) = @_;
@@ -429,8 +429,7 @@ your bug as I make changes.
 
 =head1 COPYRIGHT
 
-Copyright 2006-2008 Guillermo Roditi.  All Rights Reserved.  This is
-free software; you may redistribute it and/or modify it under the same
-terms as Perl itself.
+Copyright 2006-2008 Guillermo Roditi. This is free software; you may
+redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut

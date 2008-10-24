@@ -3,7 +3,7 @@ package POE::Component::DirWatch::Modified;
 use POE;
 use Moose;
 
-our $VERSION = "0.001000";
+our $VERSION = "0.002000";
 
 extends 'POE::Component::DirWatch';
 with 'POE::Component::DirWatch::Role::Signatures';
@@ -14,8 +14,10 @@ around '_file_callback' => sub{
   my $orig = shift;
   my ($self, $file) = @_[OBJECT, ARG0];
   my $sigs = $self->signatures;
-  return if exists $sigs->{"$file"} && $sigs->{"$file"}->is_same;
-  $orig->(@_);
+  my $new_sig = $self->_generate_signature($file);
+  return if exists $sigs->{"$file"} && $sigs->{"$file"} eq $new_sig;
+  $sigs->{"$file"} = $new_sig;
+  return $orig->(@_);
 };
 
 __PACKAGE__->meta->make_immutable;
@@ -58,9 +60,8 @@ L<POE::Component::DirWatch::New>, L<POE::Component::DirWatch>
 
 =head1 COPYRIGHT
 
-Copyright 2006-2008 Guillermo Roditi.  All Rights Reserved.  This is
-free software; you may redistribute it and/or modify it under the same
-terms as Perl itself.
+Copyright 2006-2008 Guillermo Roditi. This is free software; you may
+redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut
 
