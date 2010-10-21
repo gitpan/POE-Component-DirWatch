@@ -3,7 +3,7 @@ package POE::Component::DirWatch::New;
 use POE;
 use Moose;
 
-our $VERSION = "0.001001";
+our $VERSION = "0.300000";
 
 extends 'POE::Component::DirWatch';
 with 'POE::Component::DirWatch::Role::Signatures';
@@ -34,7 +34,7 @@ POE::Component::DirWatch::New
 DirWatch::New extends DirWatch to exclude previously seen files.
 
 This module consumes the L<POE::Component::DirWatch::Role::Signatures> role,
-please see it's documentation for information about methods or attributes
+please see its documentation for information about methods or attributes
 it provides or extends.
 
 =head1 METHODS
@@ -53,9 +53,8 @@ L<POE::Component::DirWatch>, L<Moose>
 
 =head1 COPYRIGHT
 
-Copyright 2006-2008 Guillermo Roditi.  All Rights Reserved.  This is
-free software; you may redistribute it and/or modify it under the same
-terms as Perl itself.
+Copyright 2006-2008 Guillermo Roditi. This is free software; you may
+redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut
 

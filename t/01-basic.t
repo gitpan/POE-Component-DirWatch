@@ -1,5 +1,3 @@
-#!/usr/bin/perl
-
 use strict;
 
 use POE;
@@ -30,15 +28,12 @@ exit 0;
 sub _tstart {
   my ($kernel, $heap) = @_[KERNEL, HEAP];
   # create a test directory with some test files
-  $DIR->rmtree;
-  $DIR->mkpath or die "can't create $DIR: $!\n";
+  File::Path::rmtree("$DIR");
+  mkdir("$DIR", 0755) or die "can't create $DIR: $!\n";
   for my $file (keys %FILES) {
     my $path = file($DIR, $file);
-    if(my $fh = $path->openw){
-      print $fh rand();
-    } else {
-      die "Can't create $path: $!\n";
-    }
+    open FH, ">$path" or die "can't create $path: $!\n";
+    close FH;
   }
 
   my $callback = sub {
@@ -51,7 +46,7 @@ sub _tstart {
       is_deeply(\%FILES, \%seen, 'seen all files');
       $poe_kernel->call(dirwatch_test => 'shutdown');
     } elsif ($state > keys %FILES) {
-      $DIR->rmtree;
+      File::Path::rmtree("$DIR");
       die "We seem to be looping, bailing out\n";
     }
   };
@@ -68,7 +63,7 @@ sub _tstart {
 }
 
 sub _tstop{
-  ok($DIR->rmtree, 'Proper cleanup detected');
+  ok(File::Path::rmtree("$DIR"), 'Proper cleanup detected');
 }
 
 __END__

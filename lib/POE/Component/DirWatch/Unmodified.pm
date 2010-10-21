@@ -3,18 +3,18 @@ package POE::Component::DirWatch::Unmodified;
 use POE;
 use Moose;
 
-our $VERSION = "0.002000";
+our $VERSION = "0.300000";
 
 extends 'POE::Component::DirWatch';
 with 'POE::Component::DirWatch::Role::Signatures';
 
 #--------#---------#---------#---------#---------#---------#---------#---------
 
-around _file_callback => sub{
+around _file_callback => sub {
   my $orig = shift;
   my ($self, $kernel, $file) = @_[OBJECT, KERNEL, ARG0];
   my $sig = delete $self->signatures->{"$file"};
-  return unless defined $sig && $sig eq $self->_generate_signature($file);;
+  return unless defined $sig && $sig->is_same;
   $orig->(@_);
 };
 
@@ -39,7 +39,7 @@ prevent files from being processed multiple times it is adviced that files
 are moved after successful processing.
 
 This module consumes the L<POE::Component::DirWatch::Role::Signatures> role,
-please see it's documentation for information about methods or attributes
+please see its documentation for information about methods or attributes
 it provides or extends.
 
 =head1 METHODS
@@ -47,7 +47,7 @@ it provides or extends.
 =head2 _file_callback
 
 C<around '_file_callback'> is modified to only execute the callback if the file
-has been seen previously and it's singnature has not changed since the last
+has been seen previously and its signature has not changed since the last
 poll. This behavior means that callbacks will not be called until the second
 time they are seen.
 

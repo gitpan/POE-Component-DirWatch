@@ -3,14 +3,14 @@ package POE::Component::DirWatch::Modified;
 use POE;
 use Moose;
 
-our $VERSION = "0.002000";
+our $VERSION = "0.300000";
 
 extends 'POE::Component::DirWatch';
 with 'POE::Component::DirWatch::Role::Signatures';
 
 #--------#---------#---------#---------#---------#---------#---------#---------
 
-around '_file_callback' => sub{
+around '_file_callback' => sub {
   my $orig = shift;
   my ($self, $file) = @_[OBJECT, ARG0];
   my $sigs = $self->signatures;
@@ -40,7 +40,7 @@ files that have already been seen, but still pick up files that have been
 changed. Usage is identical to L<POE::Component::DirWatch>.
 
 This module consumes the L<POE::Component::DirWatch::Role::Signatures> role,
-please see it's documentation for information about methods or attributes
+please see its documentation for information about methods or attributes
 it provides or extends.
 
 =head1 METHODS

@@ -1,13 +1,11 @@
-#!/usr/bin/perl
-
 use strict;
 
 use POE;
 use FindBin qw($Bin);
 use File::Path;
 use Path::Class qw/dir file/;
-use Test::More  tests => 4;
-use POE::Component::DirWatch::New; (no_aio => 1);
+use Test::More tests => 4;
+use POE::Component::DirWatch::New no_aio => 1;
 
 my %FILES = (foo => 1, bar => 1);
 my $DIR   = dir($Bin, 'watch');
@@ -33,15 +31,12 @@ sub _tstart {
 
   $kernel->alias_set("CharlieCard");
   # create a test directory with some test files
-  $DIR->rmtree;
-  $DIR->mkpath or die "can't create $DIR: $!\n";
+  File::Path::rmtree("$DIR");
+  mkdir("$DIR", 0755) or die "can't create $DIR: $!\n";
   for my $file (keys %FILES) {
     my $path = file($DIR, $file);
-    if(my $fh = $path->openw){
-      print $fh rand();
-    } else {
-      die "Can't create $path: $!\n";
-    }
+    open FH, ">$path" or die "can't create $path: $!\n";
+    close FH;
   }
 
   $watcher =  POE::Component::DirWatch::New->new
@@ -54,7 +49,7 @@ sub _tstart {
 }
 
 sub _tstop{
-  ok($DIR->rmtree, 'Proper cleanup detected');
+  ok(File::Path::rmtree("$DIR"), 'Proper cleanup detected');
 }
 
 sub file_found{
@@ -68,8 +63,8 @@ sub file_found{
     $poe_kernel->state("endtest",  sub{ $_[KERNEL]->post(CharlieCard => '_endtest') });
     $poe_kernel->delay("endtest", 3);
   } elsif ($state > keys %FILES) {
-    $DIR->rmtree;
-    die "We seem to be looping, bailing out\n";
+    #File::Path::rmtree("$DIR");
+    #die "We seem to be looping, bailing out\n";
   }
 }
 

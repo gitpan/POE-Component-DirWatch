@@ -1,27 +1,35 @@
---- 
-abstract: Directory Watcher for POE
-author: 
-  - Guillermo Roditi, <groditi@cpan.org>
-build_requires: 
+---
+abstract: 'Directory Watcher for POE'
+author:
+  - 'Guillermo Roditi <groditi@cpan.org>'
+build_requires:
+  ExtUtils::MakeMaker: 6.42
+  FindBin: 0
   Test::More: 0
+  Time::HiRes: 0
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: Module::Install version 0.68
+generated_by: 'Module::Install version 1.00'
 license: perl
-meta-spec: 
-  url: http://module-build.sourceforge.net/META-spec-v1.3.html
-  version: 1.3
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
 name: POE-Component-DirWatch
-no_index: 
-  directory: 
+no_index:
+  directory:
     - inc
     - t
-recommends: 
+recommends:
   POE::Component::AIO: 1.00
-requires: 
+requires:
   File::Signature: 0
   Moose: 0.24
   MooseX::Types::Path::Class: 0
   POE: 0.12
   Path::Class: 0
-  Time::HiRes: 0
-version: 0.100000
+resources:
+  bugtracker: https://rt.cpan.org/Dist/Display.html?Name=POE-Component-DirWatch
+  license: http://dev.perl.org/licenses/
+  repository: http://github.com/arcanez/poe-component-dirwatch
+version: 0.300000

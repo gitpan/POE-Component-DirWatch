@@ -1,6 +1,6 @@
 package POE::Component::DirWatch;
 
-our $VERSION = "0.200000";
+our $VERSION = "0.300000";
 
 use POE;
 use Moose;
@@ -21,63 +21,83 @@ sub import {
 
 #--------#---------#---------#---------#---------#---------#---------#--------#
 
-has alias => (is => 'ro', isa => 'Str', required => 1, default => 'dirwatch');
-has directory => (is => 'rw', isa =>  Dir,  required => 1, coerce => 1);
-has interval  => (is => 'rw', isa => 'Int', required => 1 );
+has alias => (
+  is => 'ro',
+  isa => 'Str',
+  required => 1,
+  default => 'dirwatch'
+);
+
+has directory => (
+  is => 'rw',
+  isa => Dir,
+  required => 1,
+  coerce => 1
+);
+
+has interval => (
+  is => 'rw',
+  isa => 'Int',
+  required => 1
+);
+
 has next_poll => (
-  is => 'rw', isa => 'Int',
-  clearer   => 'clear_next_poll',
+  is => 'rw',
+  isa => 'Int',
+  clearer => 'clear_next_poll',
   predicate => 'has_next_poll'
 );
 
 has filter => (
-  is => 'rw', isa => 'CodeRef',
-  clearer   => 'clear_filter',
+  is => 'rw',
+  isa => 'CodeRef',
+  clearer => 'clear_filter',
   predicate => 'has_filter'
 );
 
-has dir_callback => (
-  is => 'rw', isa => 'Ref',
-  clearer   => 'clear_dir_callback',
+has dir_callback  => (
+  is => 'rw',
+  isa => 'Ref',
+  clearer => 'clear_dir_callback',
   predicate => 'has_dir_callback'
 );
 
 has file_callback => (
-  is => 'rw', isa => 'Ref',
-  clearer   => 'clear_file_callback',
+  is => 'rw',
+  isa => 'Ref',
+  clearer => 'clear_file_callback',
   predicate => 'has_file_callback'
 );
 
-sub BUILD{
+sub BUILD {
   my ($self, $args) = @_;
-  POE::Session->create
-      (
-       object_states =>
-       [ $self,
-         {
-          _start   => '_start',
-          _pause   => '_pause',
-          _resume  => '_resume',
-          shutdown => '_shutdown',
-          poll     => '_poll',
-          ($self->has_dir_callback  ? (dir_callback  => '_dir_callback')  : () ),
-          ($self->has_file_callback ? (file_callback => '_file_callback') : () ),
-         },
-       ]
-      );
+  POE::Session->create(
+    object_states => [
+      $self,
+      {
+        _start   => '_start',
+        _pause   => '_pause',
+        _resume  => '_resume',
+        shutdown => '_shutdown',
+        poll     => '_poll',
+        ($self->has_dir_callback  ? (dir_callback  => '_dir_callback')  : () ),
+        ($self->has_file_callback ? (file_callback => '_file_callback') : () ),
+      },
+    ]
+  );
 }
 
-sub session{ $poe_kernel->alias_resolve( shift->alias ) }
+sub session { $poe_kernel->alias_resolve( shift->alias ) }
 
 #--------#---------#---------#---------#---------#---------#---------#---------
 
-sub _start{
+sub _start {
   my ($self, $kernel) = @_[OBJECT, KERNEL];
   $kernel->alias_set($self->alias); # set alias for ourselves and remember it
   $self->next_poll( $kernel->delay_set(poll => $self->interval) );
 }
 
-sub _pause{
+sub _pause {
   my ($self, $kernel, $until) = @_[OBJECT, KERNEL, ARG0];
   $kernel->alarm_remove($self->next_poll) if $self->has_next_poll;
   $self->clear_next_poll;
@@ -89,7 +109,7 @@ sub _pause{
 
 }
 
-sub _resume{
+sub _resume {
   my ($self, $kernel, $when) = @_[OBJECT, KERNEL, ARG0];
   $kernel->alarm_remove($self->next_poll) if $self->has_next_poll;
   $self->clear_next_poll;
@@ -102,17 +122,17 @@ sub _resume{
 
 #--------#---------#---------#---------#---------#---------#---------#---------
 
-sub pause{
+sub pause {
   my ($self, $until) = @_;
   $poe_kernel->call($self->alias, _pause => $until);
 }
 
-sub resume{
+sub resume {
   my ($self, $when) = @_;
   $poe_kernel->call($self->alias, _resume => $when);
 }
 
-sub shutdown{
+sub shutdown {
   my ($self) = @_;
   $poe_kernel->alarm_remove($self->next_poll) if $self->has_next_poll;
   $self->clear_next_poll;
@@ -125,7 +145,7 @@ sub _poll {
   my ($self, $kernel) = @_[OBJECT, KERNEL];
   $self->clear_next_poll;
 
-  #just do this part once perl poll
+  #just do this part once per poll
   my $filter = $self->has_filter ? $self->filter : undef;
   my $has_dir_cb  = $self->has_dir_callback;
   my $has_file_cb = $self->has_file_callback;
@@ -234,9 +254,9 @@ event and the scheduled start of the next. Defaults to 1.
 
 =over 4
 
-=item b<has_file_callback> - predicate
+=item B<has_file_callback> - predicate
 
-=item b<clear_file_callback> - clearer
+=item B<clear_file_callback> - clearer
 
 =back
 
@@ -249,9 +269,9 @@ and remove it from the directory to avoid duplicate processing
 
 =over 4
 
-=item b<has_dir_callback> - predicate
+=item B<has_dir_callback> - predicate
 
-=item b<clear_dir_callback> - clearer
+=item B<clear_dir_callback> - clearer
 
 =back
 
@@ -263,9 +283,9 @@ representing the directory found.
 
 =over 4
 
-=item b<has_filter> - predicate
+=item B<has_filter> - predicate
 
-=item b<clear_filter> - clearer
+=item B<clear_filter> - clearer
 
 =back
 
@@ -279,9 +299,9 @@ called and false if the file should be ignored.
 
 =over 4
 
-=item b<has_next_poll> - predicate
+=item B<has_next_poll> - predicate
 
-=item b<clear_next_poll> - clearer
+=item B<clear_next_poll> - clearer
 
 =back
 
@@ -394,8 +414,8 @@ Constructor. C<create()>s a L<POE::Session>.
 
 L<POE::Session>, L<POE::Component>, L<Moose>, L<POE>,
 
-The SVN repository for this project can be found in it's Google Code project
-page - L<http://code.google.com/p/poe-component-dirwatch-object/>
+The git repository for this project can be found in on github,
+L<http://github.com/arcanez/poe-component-dirwatch/>
 
 =head1 AUTHOR
 
@@ -413,9 +433,9 @@ your bug as I make changes.
 
 =over 4
 
-=item #PoE & #Moose
+=item #poe & #moose on irc.perl.org
 
-=item Matt S Trout <mst@shadowcatsystems.co.uk>
+=item Matt S Trout
 
 =item Rocco Caputo
 
